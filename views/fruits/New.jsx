@@ -1,20 +1,26 @@
-const React = require("react")
+import React from 'react';
 
-class New extends React.Component {
+class NewFruit extends React.Component {
   render() {
     return (
       <div>
         <h1>New Fruit Page</h1>
 
         <form action="/fruits" method="POST">
-          Name: <input type="text"  name="name" /> <br />
-          Color: <input type="text" name="color" /> <br />
-          Is Ready To Eat: <input type="checkbox" name="readyToEat" /> <br />
+          <label htmlFor="name">Name:</label>
+          <input type="text" id="name" name="name" /><br />
+
+          <label htmlFor="color">Color:</label>
+          <input type="text" id="color" name="color" /><br />
+
+          <label htmlFor="readyToEat">Is Ready To Eat:</label>
+          <input type="checkbox" id="readyToEat" name="readyToEat" /><br />
+
           <input type="submit" value="Create Fruit" />
         </form>
       </div>
-    )
+    );
   }
 }
 
-module.exports = New
+export default NewFruit;
