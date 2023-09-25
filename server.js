@@ -73,110 +73,150 @@ app.get('/fruits/seed', async (req, res) => {
 })
 
 
-// Index
+
+// Index Route
 app.get('/fruits', async (req, res) => {
   try {
-    const foundFruits = await Fruit.find({});
-    console.log(foundFruits);
-    res.status(200).render('fruits/Index', {
-      fruits: foundFruits,
-    });
-  } catch (err) {
-    res.status(400).send(err);
+      const foundFruits = await Fruit.find({})
+      res.status(200).render('fruits/Index', {
+          fruits: foundFruits,
+      })
+  } catch {
+      res.status(400).send(err)
   }
 });
 
-// New
+app.get('/vegetables', async (req, res) => {
+  try {
+      const foundVegetables = await Vegetable.find({})
+      res.status(200).render('vegetables/Index', {
+          vegetables: foundVegetables,
+      })
+  } catch {
+      res.status(400).send(err)
+  }
+})
+
+// New Route
 app.get('/fruits/new', (req, res) => {
-  console.log('New controller');
   res.render('fruits/New');
 });
 
-// Delete
-app.delete('/fruits/:id', async (req, res) => {
-  // this is is going to actually implement the delete functionality from the database
-  try {
-    // we are getting this id from the req params (:id)
-    await Fruit.findByIdAndDelete(req.params.id);
-    res.status(200).redirect('/fruits');
-  } catch (err) {
-    res.status(400).send(err);
-  }
-
-  // we had this in originally to test that the route worked.  
-  // res.send('deleting...');
+app.get('/vegetables/new', (req, res) => {
+  res.render('vegetables/New')
 })
 
 
+// Delete Route
+
+app.delete('/fruits/:id', async (req, res) => {
+  try {
+      await Fruit.findByIdAndDelete(req.params.id)
+      res.status(200).redirect('/fruits')
+  } catch (err) {
+      res.status(400).send(err)
+  }
+})
 
 // Update
 app.put('/fruits/:id', async (req, res) => {
   try {
-    if (req.body.readyToEat === 'on') {
-      req.body.readyToEat = true;
-    }
-    else {
-      req.body.readyToEat = false;
-    }
-    const updatedFruit = await Fruit.findByIdAndUpdate(
-      // id is from the url that we got by clicking on the edit <a/> tag
-      req.params.id,
-      // the information from the form, with the update that we made above
-      req.body,
-      // need this to prevent a delay in the update
-      { new: true })
-    console.log(updatedFruit);
-    res.redirect(`/fruits/${req.params.id}`);
+      if (req.body.readyToEat === 'on') {
+          req.body.readyToEat = true;
+      }
+      else {
+          req.body.readyToEat = false;
+      }
+      const updatedFruit = await Fruit.findByIdAndUpdate(
+          // id is from the url that we got by clicking on the edit <a/> tag
+          req.params.id,
+          // the information from the form, with the update that we made above
+          req.body,
+          // need this to prevent a delay in the update
+          { new: true })
+      console.log(updatedFruit);
+      res.redirect(`/fruits/${req.params.id}`);
   } catch (err) {
-    res.status(400).send(err);
+      res.status(400).send(err);
   }
 });
 
-// Create
+
+// Post Route
 app.post('/fruits', async (req, res) => {
   try {
-    // if(req.body.readyToEat === 'on'){ //if checked, req.body.readyToEat is set to 'on'
-    //   req.body.readyToEat = true; //do some data correction
-    // } else { //if not checked, req.body.readyToEat is undefined
-    //   req.body.readyToEat = false; //do some data correction
-    // }
-    req.body.readyToEat = req.body.readyToEat === 'on';
 
-    const createdFruit = await Fruit.create(req.body);
+      // if (req.body.readyToEat === 'on') { //if checked, req.body.readyToEat is set to 'on'
+      //     req.body.readyToEat = true;
+      // } else { //if not checked, req.body.readyToEat is undefined
+      //     req.body.readyToEat = false;
+      // }
 
-    res.status(201).redirect('/fruits');
+      req.body.readyToEat = req.body.readyToEat === "on" ? true : false
+
+      const createdFruit = await Fruit.create(req.body)
+
+      res.status(201).redirect('/fruits/')
   } catch (err) {
-    res.status(400).send(err);
+      res.status(400).send(err)
+  }
+
+});
+
+app.post('/vegetables', async (req, res) => {
+
+  try {
+      req.body.readyToEat = req.body.readyToEat === "on" ? true : false
+
+      const createdVegetable = await Vegetable.create(req.body)
+
+      res.status(201).redirect('/vegetables')
+  } catch (err) {
+      res.status(400).send(err)
   }
 });
 
 // Edit
 app.get('/fruits/:id/edit', async (req, res) => {
   try {
-    // find the document in the database that we want to update 
-    const foundFruit = await Fruit.findById(req.params.id);
-    res.render('fruits/Edit', {
-      fruit: foundFruit //pass in the foundFruit so that we can prefill the form
-    })
+      // find the document in the database that we want to update 
+      const foundFruit = await Fruit.findById(req.params.id);
+      res.render('fruits/Edit', {
+          fruit: foundFruit //pass in the foundFruit so that we can prefill the form
+      })
   } catch (err) {
-    res.status(400).send(err);
+      res.status(400).send(err);
   }
 })
 
-// Show
+//Show Route
 app.get('/fruits/:id', async (req, res) => {
   try {
-    const foundFruit = await Fruit.findById(req.params.id);
+      const foundFruit = await Fruit.findById(req.params.id)
 
-    //second param of the render method must be an object
-    res.render('fruits/Show', {
-      //there will be a variable available inside the jsx file called fruit, its value is fruits[req.params.indexOfFruitsArray]
-      fruit: foundFruit,
-    });
+      res.render('fruits/Show', {
+          fruit: foundFruit,
+      });
   } catch (err) {
-    res.status(400).send(err);
+      res.status(400).send(err)
   }
 });
+
+app.get('/vegetables/:id', async (req, res) => {
+  try {
+      const foundVegetable = await Vegetable.findById(req.params.id)
+
+      res.render('vegetables/Show', {
+          vegetable: foundVegetable
+      })
+  } catch (err) {
+      res.status(400).send(err)
+  }
+})
+
+
+
+
 
 app.listen(PORT, () => {
   console.log(`Listening on port: ${PORT}`);
