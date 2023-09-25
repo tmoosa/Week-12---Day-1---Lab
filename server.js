@@ -128,11 +128,8 @@ app.put('/fruits/:id', async (req, res) => {
           req.body.readyToEat = false;
       }
       const updatedFruit = await Fruit.findByIdAndUpdate(
-          // id is from the url that we got by clicking on the edit <a/> tag
           req.params.id,
-          // the information from the form, with the update that we made above
           req.body,
-          // need this to prevent a delay in the update
           { new: true })
       console.log(updatedFruit);
       res.redirect(`/fruits/${req.params.id}`);
@@ -142,7 +139,7 @@ app.put('/fruits/:id', async (req, res) => {
 });
 
 
-// Post Route
+// Post 
 app.post('/fruits', async (req, res) => {
   try {
 
@@ -179,10 +176,9 @@ app.post('/vegetables', async (req, res) => {
 // Edit
 app.get('/fruits/:id/edit', async (req, res) => {
   try {
-      // find the document in the database that we want to update 
       const foundFruit = await Fruit.findById(req.params.id);
       res.render('fruits/Edit', {
-          fruit: foundFruit //pass in the foundFruit so that we can prefill the form
+          fruit: foundFruit 
       })
   } catch (err) {
       res.status(400).send(err);
@@ -213,10 +209,6 @@ app.get('/vegetables/:id', async (req, res) => {
       res.status(400).send(err)
   }
 })
-
-
-
-
 
 app.listen(PORT, () => {
   console.log(`Listening on port: ${PORT}`);
